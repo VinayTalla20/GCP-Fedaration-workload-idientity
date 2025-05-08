@@ -46,10 +46,17 @@ This guide walks you through enabling **Workload Identity Federation** in Google
 ```bash
 kubectl create serviceaccount secretmanagersa -n syndication
 
+```bash
+
+
+```bash
 ### 2. Bind the created google service account(GSA) with Kubernetes service account(KSA) 
 
 ```bash
+
+```bash
 gcloud iam service-accounts add-iam-policy-binding secretserviceacc@smartconx-dev-400910.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:smartconx-dev-400910.svc.id.goog[syndication/secretmanagersa]" 
+```bash
 
 ### 3. annotate the Kubernetes Service Account as below 
 
