@@ -1,0 +1,67 @@
+SET UP ADC IN GKE
+Enable workload identity federation for GKE on an existing cluster
+ 
+To enable workload identity federation for GKE on an existing cluster, do the following:
+Go to the Google Kubernetes Engine page in Google Cloud console. 
+Go to Google Kubernetes Engine
+In the cluster list, click the name of the cluster you want to modify.
+On the cluster details page, in the Security section, click edit Edit workload identity federation for GKE.
+In the Edit Workload Identity dialog, select the Enable Workload Identity checkbox.
+Click Save changes.
+From <  https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity?cloudshell=true#console_1> 
+ 
+ 
+modify an existing node pool to use workload identity federation for GKE
+Go to the Google Kubernetes Engine page in Google Cloud console. 
+Go to Google Kubernetes Engine
+In the cluster list, click the name of the cluster that you want to modify.
+Click the Nodes tab.
+In the Node Pools section, click the name of the node pool that you want to modify.
+On the Node pool details page, click edit Edit.
+On the Edit node pool page, in the Security section, select the Enable GKE Metadata Server checkbox.
+Click Save.
+ 
+From <  https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity?cloudshell=true#console_1> 
+ 
+You must assign a Kubernetes service account to the application and configure that Kubernetes service account to act as an IAM service account. 
+ 
+    a. Create a kubernities service account - "secretmanagersa"
+           kubectl create serviceaccount <service acc name> -n syndication
+ 
+Bind the created google service account(GSA) with Kubernetes service account(KSA) 
+gcloud iam service-accounts add-iam-policy-binding secretserviceacc@smartconx-dev-400910.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:smartconx-dev-400910.svc.id.goog[syndication/secretmanagersa]" 
+ 
+    c. annotate the KSA as below 
+ 
+       kubectl annotate serviceaccount secretmanagersa --namespace syndication iam.gke.io/gcp-service-accou
+nt=secretserviceacc@smartconx-dev-400910.iam.gserviceaccount.com
+ 
+Add the KSA to the pod by following below syntax in deployment.yaml file
+ 
+ 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.keymanagementservicename }}
+spec:
+  replicas: {{ .Values.keymanagementservicereplicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.keymanagementservicename }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.keymanagementservicename }}
+        tier: backend
+    spec:
+      serviceAccountName: secretmanagersa
+      containers:
+        - name: {{ .Values.keymanagementservicename }}
+          image: {{ .Values.keymanagementserviceImage }}:{{ .Values.keymanagementservicetag }}
+          ports:
+            - name: http
+              containerPort: 8443
+      imagePullSecrets: 
+      - name: {{ .Values.secretName }}
+      nodeSelector:
+        app: smartconx
