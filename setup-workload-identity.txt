@@ -30,6 +30,31 @@ You must assign a Kubernetes service account to the application and configur
  
 Bind the created google service account(GSA) with Kubernetes service account(KSA) 
 gcloud iam service-accounts add-iam-policy-binding secretserviceacc@smartconx-dev-400910.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:smartconx-dev-400910.svc.id.goog[syndication/secretmanagersa]" 
+
+
+gcloud iam service-accounts add-iam-policy-binding secretserviceacc@smartconx-dev-400910.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:smartconx-dev-400910.svc.id.goog[logging/loki-stack-grafana]"
+Updated IAM policy for serviceAccount [secretserviceacc@smartconx-dev-400910.iam.gserviceaccount.com].
+bindings:
+- members:
+  - user:divyak@italentdigital.com
+  role: roles/composer.ServiceAgentV2Ext
+- members:
+  - serviceAccount:secretserviceacc@smartconx-dev-400910.iam.gserviceaccount.com
+  role: roles/iam.serviceAccountOpenIdTokenCreator
+- members:
+  - serviceAccount:secretserviceacc@smartconx-dev-400910.iam.gserviceaccount.com
+  - user:divyak@italentdigital.com
+  - user:lnarayana@italentdigital.com
+  role: roles/iam.serviceAccountTokenCreator
+- members:
+  - serviceAccount:smartconx-dev-400910.svc.id.goog[logging/loki-stack-grafana]
+  - serviceAccount:smartconx-dev-400910.svc.id.goog[syndication/secretmanagersa]
+  role: roles/iam.workloadIdentityUser
+- members:
+  - serviceAccount:secretserviceacc@smartconx-dev-400910.iam.gserviceaccount.com
+  role: roles/owner
+etag: BwY1JWbEpok=
+version: 1
  
     c. annotate the KSA as below 
  
